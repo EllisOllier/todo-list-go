@@ -17,7 +17,7 @@ func main() {
 func getTodos(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w) // set NewEncoder to use ResponseWriter as the output stream
-	enc.Encode(todos)         // Encode todos to the output streamÍÍ
+	enc.Encode(todos)         // encode todos to the output stream
 }
 
 func postTodo(w http.ResponseWriter, r *http.Request) {
