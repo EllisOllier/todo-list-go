@@ -11,7 +11,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /todos", getTodos)
 	mux.HandleFunc("POST /todos", postTodo)
-	// mux.HandleFunc("UPDATE /todos/{id}", updateTodo)
+	mux.HandleFunc("PUT /todos/{id}", updateTodo)
 	mux.HandleFunc("DELETE /todos/{id}", deleteTodo)
 
 	http.ListenAndServe(":8080", mux)
@@ -64,5 +64,27 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 
 // runs UPDATE request to update a todo item task string matching the given id
 func updateTodo(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		http.Error(w, "Invalid ID format", http.StatusBadRequest)
+		return
+	}
 
+	var updatedTodo Todo
+	dec := json.NewDecoder(r.Body)                   // decodes the body
+	if err := dec.Decode(&updatedTodo); err != nil { // fetches the updated todo from the request body
+		return
+	}
+
+	json.NewDecoder(r.Body)
+	for _, v := range todos {
+		if v.ID == id {
+			mu.Lock()
+			todos[v.ID] = updatedTodo
+			mu.Unlock()
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}
 }
