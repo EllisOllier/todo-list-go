@@ -44,10 +44,10 @@ func postTodo(w http.ResponseWriter, r *http.Request) {
 
 // runs DELETE request to delete a todo item task matching the given id
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
-	var id int
-
-	if s, err := strconv.Atoi(r.PathValue("id")); err == nil {
-		id = s
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		http.Error(w, "Invalid ID format", http.StatusBadRequest)
+		return
 	}
 
 	for i, v := range todos {
