@@ -16,3 +16,10 @@ Functionally this project is a todo list api which allows the user to:
 - Add new todos to the list
 - Update todos in the list (Renaming a task)
 - Delete todos from the list
+
+### Documentation Used
+https://pkg.go.dev/net/http
+https://pkg.go.dev/encoding/json
+https://pkg.go.dev/sync 
+https://pkg.go.dev/strconv 
+https://go.dev/blog/slices-intro
