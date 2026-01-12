@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	// imported with command: "go mod init github.com/EllisOllier/todo-list-go"
-	"github.com/EllisOllier/todo-list-go/internal/todo" // uses repo to import /interna/todo code as they are private
+	"github.com/EllisOllier/todo-list-go/internal/todo" // uses repo to import /internal/todo code as they are private
 )
 
 func main() {
