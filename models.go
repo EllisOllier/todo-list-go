@@ -11,6 +11,7 @@ type Todo struct {
 // todos holds the stored in memory list of tasks
 var todos = []Todo{
 	{ID: 1, Task: "Make my other end points for todo-list-go"},
+	{ID: 2, Task: "Did this one delete or stay?"},
 }
 
 // mu is used to arrange access to the todos slice across goroutines
