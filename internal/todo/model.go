@@ -18,8 +18,9 @@ type TodoService struct {
 func NewTodoService() *TodoService {
 	return &TodoService{
 		Todos: []Todo{
-			{ID: 1, Task: "Make my other end points for todo-list-go"},
-			{ID: 2, Task: "Did this one delete or stay?"},
+			{ID: 1, Task: "Add sqlite file to project"},
+			{ID: 2, Task: "Add sqlite.go database connection logic"},
+			{ID: 3, Task: "Move any data logic from handler.go to repository.go which interacts directly with database"},
 		},
 	}
 }
