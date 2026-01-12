@@ -4,12 +4,15 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /todos", getTodos)
 	mux.HandleFunc("POST /todos", postTodo)
+	// mux.HandleFunc("UPDATE /todos/{id}", updateTodo)
+	mux.HandleFunc("DELETE /todos/{id}", deleteTodo)
 
 	http.ListenAndServe(":8080", mux)
 }
@@ -41,7 +44,22 @@ func postTodo(w http.ResponseWriter, r *http.Request) {
 
 // runs DELETE request to delete a todo item task matching the given id
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
+	var id int
 
+	if s, err := strconv.Atoi(r.PathValue("id")); err == nil {
+		id = s
+	}
+
+	for i, v := range todos {
+		if v.ID == id {
+			mu.Lock()
+			todos = append(todos[:i], todos[i+1:]...) // ... unpacks the slice into individual items so append can handle
+			mu.Unlock()
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}
 }
 
 // runs UPDATE request to update a todo item task string matching the given id
