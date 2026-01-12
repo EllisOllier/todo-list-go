@@ -83,18 +83,16 @@ func patchTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var updateReq UpdateTodoRequest
-	// var updatedTodo Todo
 	dec := json.NewDecoder(r.Body)                 // decodes the body
 	if err := dec.Decode(&updateReq); err != nil { // fetches the updated todo from the request body
 		return
 	}
 
-	json.NewDecoder(r.Body)
-	for _, v := range todos {
+	for i, v := range todos {
 		if v.ID == id {
 			if updateReq.Task != nil {
 				mu.Lock()
-				todos[v.ID].Task = *updateReq.Task
+				todos[i].Task = *updateReq.Task
 				mu.Unlock()
 			}
 
