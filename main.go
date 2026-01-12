@@ -42,26 +42,6 @@ func postTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newTodo)
 }
 
-// runs DELETE request to delete a todo item task matching the given id
-func deleteTodo(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.PathValue("id"))
-	if err != nil {
-		http.Error(w, "Invalid ID format", http.StatusBadRequest)
-		return
-	}
-
-	for i, v := range todos {
-		if v.ID == id {
-			mu.Lock()
-			todos = append(todos[:i], todos[i+1:]...) // ... unpacks the slice into individual items so append can handle
-			mu.Unlock()
-			w.WriteHeader(http.StatusNoContent)
-			return
-		}
-		w.WriteHeader(http.StatusNotFound)
-	}
-}
-
 // runs PUT request to replace a todo item matching the given id
 func putTodo(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
@@ -83,6 +63,26 @@ func putTodo(w http.ResponseWriter, r *http.Request) {
 			todos[v.ID] = updatedTodo
 			mu.Unlock()
 			w.WriteHeader(http.StatusOK)
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+// runs DELETE request to delete a todo item task matching the given id
+func deleteTodo(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		http.Error(w, "Invalid ID format", http.StatusBadRequest)
+		return
+	}
+
+	for i, v := range todos {
+		if v.ID == id {
+			mu.Lock()
+			todos = append(todos[:i], todos[i+1:]...) // ... unpacks the slice into individual items so append can handle
+			mu.Unlock()
+			w.WriteHeader(http.StatusNoContent)
 			return
 		}
 		w.WriteHeader(http.StatusNotFound)
