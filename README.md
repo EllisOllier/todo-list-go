@@ -33,3 +33,4 @@ https://pkg.go.dev/encoding/json
 https://pkg.go.dev/sync  
 https://pkg.go.dev/strconv  
 https://go.dev/blog/slices-intro  
+https://github.com/golang-standards/project-layout  
