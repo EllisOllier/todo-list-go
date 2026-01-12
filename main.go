@@ -1,9 +1,9 @@
+// Package main is a simple Todo API using the standard library
 package main
 
 import (
 	"encoding/json"
 	"net/http"
-	"sync"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func getTodos(w http.ResponseWriter, r *http.Request) {
 
 func postTodo(w http.ResponseWriter, r *http.Request) {
 	var newTodo Todo
-	var mu sync.Mutex              // sync.Mutex is a type not a value
+
 	dec := json.NewDecoder(r.Body) // := requires a specified value on the right side
 
 	if err := dec.Decode(&newTodo); err != nil {
@@ -43,13 +43,4 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 
 func updateTodo(w http.ResponseWriter, r *http.Request) {
 
-}
-
-type Todo struct {
-	ID   int    `json:"id"`
-	Task string `json:"task"`
-}
-
-var todos = []Todo{
-	{ID: 1, Task: "Make my other end points for todo-list-go"},
 }
