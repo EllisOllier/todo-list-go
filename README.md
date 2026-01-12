@@ -17,6 +17,16 @@ Functionally this project is a todo list api which allows the user to:
 - Update todos in the list (Renaming a task)
 - Delete todos from the list
 
+### Multi-file Structure
+/cmd/server/main.go:  
+Handles the setup of the server and calling the /internal/todo/handler.go routes via importing routes from github repo
+
+/internal/todo/handler.go:  
+Handles all logic and data handling for the routes
+
+/internal/todo/model.go:  
+Declares structure for Todo and TodoService struct which is implemented with NewTodoService helper function
+
 ### Documentation Used
 https://pkg.go.dev/net/http  
 https://pkg.go.dev/encoding/json  
