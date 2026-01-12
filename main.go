@@ -11,7 +11,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /todos", getTodos)
 	mux.HandleFunc("POST /todos", postTodo)
-	mux.HandleFunc("PUT /todos/{id}", updateTodo)
+	mux.HandleFunc("PUT /todos/{id}", putTodo)
 	mux.HandleFunc("DELETE /todos/{id}", deleteTodo)
 
 	http.ListenAndServe(":8080", mux)
@@ -24,7 +24,7 @@ func getTodos(w http.ResponseWriter, r *http.Request) {
 	enc.Encode(todos)         // encode todos to the output stream
 }
 
-// runs POST request to add new a task to todos slice stored in memory
+// runs POST request to add new a task to todos slice stored in-memory
 func postTodo(w http.ResponseWriter, r *http.Request) {
 	var newTodo Todo
 
@@ -62,8 +62,8 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// runs UPDATE request to update a todo item task string matching the given id
-func updateTodo(w http.ResponseWriter, r *http.Request) {
+// runs PUT request to replace a todo item matching the given id
+func putTodo(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		http.Error(w, "Invalid ID format", http.StatusBadRequest)
