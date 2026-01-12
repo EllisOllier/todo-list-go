@@ -18,8 +18,8 @@ Functionally this project is a todo list api which allows the user to:
 - Delete todos from the list
 
 ### Documentation Used
-https://pkg.go.dev/net/http
-https://pkg.go.dev/encoding/json
-https://pkg.go.dev/sync 
-https://pkg.go.dev/strconv 
-https://go.dev/blog/slices-intro
+https://pkg.go.dev/net/http  
+https://pkg.go.dev/encoding/json  
+https://pkg.go.dev/sync  
+https://pkg.go.dev/strconv  
+https://go.dev/blog/slices-intro  
