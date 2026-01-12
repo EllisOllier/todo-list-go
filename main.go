@@ -12,6 +12,7 @@ func main() {
 	mux.HandleFunc("GET /todos", getTodos)
 	mux.HandleFunc("POST /todos", postTodo)
 	mux.HandleFunc("PUT /todos/{id}", putTodo)
+	mux.HandleFunc("PATCH /todos/{id}", patchTodo)
 	mux.HandleFunc("DELETE /todos/{id}", deleteTodo)
 
 	http.ListenAndServe(":8080", mux)
@@ -65,8 +66,8 @@ func putTodo(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
-		w.WriteHeader(http.StatusNotFound)
 	}
+	w.WriteHeader(http.StatusNotFound)
 }
 
 // runs PATCH request to replace a todo item matching the given id
@@ -100,8 +101,8 @@ func patchTodo(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
-		w.WriteHeader(http.StatusNotFound)
 	}
+	w.WriteHeader(http.StatusNotFound)
 }
 
 // runs DELETE request to delete a todo item task matching the given id
@@ -120,6 +121,6 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
-		w.WriteHeader(http.StatusNotFound)
 	}
+	w.WriteHeader(http.StatusNotFound)
 }
