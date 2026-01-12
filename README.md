@@ -1,7 +1,7 @@
 # todo-list-go
 **A lightweight Todo API built using only the Go standard library**
 
-## Features
+### Features
 - GET route which returns all todos in the slice
 - POST route which appends a new todo at the end of the slice
 - PUT route which replaces a specficied todo index
