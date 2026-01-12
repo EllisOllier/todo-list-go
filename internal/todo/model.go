@@ -10,7 +10,7 @@ type Todo struct {
 
 // delcares the structure for the TodoService helper
 type TodoService struct {
-	Mu    sync.Mutex
+	Mu    sync.Mutex // will not longer be needed when adding database integration as sqlite handles concurrency
 	Todos []Todo
 }
 
