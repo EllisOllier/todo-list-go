@@ -14,7 +14,7 @@ type TodoService struct {
 	Todos []Todo
 }
 
-// a helper function to initialise and handle Todos slice
+// a helper function to initialise and handle Todos slice which allows a single instance to be saved in memory and accessed from both /cmd/server/main.go and /internal/todo/handler.go with the same dataset syncing across
 func NewTodoService() *TodoService {
 	return &TodoService{
 		Todos: []Todo{
