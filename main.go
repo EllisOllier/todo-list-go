@@ -14,12 +14,14 @@ func main() {
 	http.ListenAndServe(":8080", mux)
 }
 
+// runs GET request for all todos slice stored in-memory
 func getTodos(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w) // set NewEncoder to use ResponseWriter as the output stream
 	enc.Encode(todos)         // encode todos to the output stream
 }
 
+// runs POST request to add new a task to todos slice stored in memory
 func postTodo(w http.ResponseWriter, r *http.Request) {
 	var newTodo Todo
 
@@ -37,10 +39,12 @@ func postTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newTodo)
 }
 
+// runs DELETE request to delete a todo item task matching the given id
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// runs UPDATE request to update a todo item task string matching the given id
 func updateTodo(w http.ResponseWriter, r *http.Request) {
 
 }
