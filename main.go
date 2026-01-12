@@ -58,10 +58,10 @@ func putTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewDecoder(r.Body)
-	for _, v := range todos {
+	for i, v := range todos {
 		if v.ID == id {
 			mu.Lock()
-			todos[v.ID] = updatedTodo
+			todos[i] = updatedTodo
 			mu.Unlock()
 			w.WriteHeader(http.StatusOK)
 			return
