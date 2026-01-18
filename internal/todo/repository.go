@@ -45,3 +45,12 @@ func (r *TodoRepository) GetTodoById(id int) (Todo, error) {
 
 	return temp, nil
 }
+
+func (r *TodoRepository) AddTodo(todo Todo) (int, error) {
+	var entryId int
+	err := r.db.QueryRow("INSERT INTO tasks (task) VALUES ($1) RETURNING id", todo.Task).Scan(&entryId)
+	if err != nil {
+		return -1, err
+	}
+	return entryId, nil
+}
