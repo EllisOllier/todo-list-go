@@ -22,6 +22,7 @@ func (s *TodoService) GetTodos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	enc.Encode(rows) // encode todos to the output stream
 }
 
@@ -44,26 +45,37 @@ func (s *TodoService) GetTodoById(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
 		return
 	}
+	w.WriteHeader(http.StatusOK)
 	enc.Encode(row)
 }
 
-// // runs POST request to add new a task to todos slice stored in-memory
-// func (s *TodoService) PostTodo(w http.ResponseWriter, r *http.Request) {
-// 	var newTodo Todo
+// runs POST request to add new a task to todos slice stored in-memory
+func (s *TodoService) PostTodo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	type NewTodoRequest struct {
+		Task *string `json:"task"`
+	}
 
-// 	dec := json.NewDecoder(r.Body) // := requires a specified value on the right side
+	var req NewTodoRequest
 
-// 	if err := dec.Decode(&newTodo); err != nil {
-// 		return
-// 	}
+	dec := json.NewDecoder(r.Body) // := requires a specified value on the right side
+	if err := dec.Decode(&req); err != nil {
+		http.Error(w, "Bad Request: 400", http.StatusBadRequest)
+		return
+	}
 
-// 	s.Mu.Lock()                        // locks the goroutine so todos slice can only be modified at this point
-// 	s.Todos = append(s.Todos, newTodo) // appends newTodo from body to todos
-// 	s.Mu.Unlock()                      // unlocks the goroutine and allows todos slice to be modified
+	newTodo := Todo{Task: *req.Task}
 
-// 	w.WriteHeader(http.StatusCreated)
-// 	json.NewEncoder(w).Encode(newTodo)
-// }
+	todoId, err := s.todoRepository.AddTodo(newTodo)
+	if err != nil {
+		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
+		return
+	}
+	newTodo.ID = todoId
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(newTodo)
+}
 
 // // runs PUT request to replace a todo item matching the given id
 // func (s *TodoService) PutTodo(w http.ResponseWriter, r *http.Request) {
