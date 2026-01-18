@@ -17,10 +17,6 @@ func (s *TodoService) GetTodos(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
 		return
 	}
-	if rows == nil { // test this as it doesnt really need to return NoResults
-		http.Error(w, "No results found", http.StatusNoContent) // might be wrong status
-		return
-	}
 
 	w.WriteHeader(http.StatusOK)
 	enc.Encode(rows) // encode todos to the output stream
