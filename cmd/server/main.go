@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	// imported with command: "go mod init github.com/EllisOllier/todo-list-go"
@@ -15,17 +14,16 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(db.Stats())
-
-	todoService := todo.NewTodoService() // references NewTodoServer in /internal/todo/model.go
+	todoRepository := todo.NewTodoRepository(db)
+	todoService := todo.NewTodoService(todoRepository) // references NewTodoServer in /internal/todo/model.go
 	mux := http.NewServeMux()
 
 	// uses todoService to access routes from /internal/todo/handler.go
 	mux.HandleFunc("GET /todos", todoService.GetTodos)
-	mux.HandleFunc("POST /todos", todoService.PostTodo)
-	mux.HandleFunc("PUT /todos/{id}", todoService.PutTodo)
-	mux.HandleFunc("PATCH /todos/{id}", todoService.PatchTodo)
-	mux.HandleFunc("DELETE /todos/{id}", todoService.DeleteTodo)
+	// mux.HandleFunc("POST /todos", todoService.PostTodo)
+	// mux.HandleFunc("PUT /todos/{id}", todoService.PutTodo)
+	// mux.HandleFunc("PATCH /todos/{id}", todoService.PatchTodo)
+	// mux.HandleFunc("DELETE /todos/{id}", todoService.DeleteTodo)
 
 	http.ListenAndServe(":8080", mux)
 }
