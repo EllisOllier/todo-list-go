@@ -17,7 +17,7 @@ func (s *TodoService) GetTodos(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
 		return
 	}
-	if rows == nil {
+	if rows == nil { // test this as it doesnt really need to return NoResults
 		http.Error(w, "No results found", http.StatusNoContent) // might be wrong status
 		return
 	}
@@ -80,65 +80,38 @@ func (s *TodoService) PostTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newTodo)
 }
 
-// // runs PUT request to replace a todo item matching the given id
-// func (s *TodoService) PutTodo(w http.ResponseWriter, r *http.Request) {
-// 	id, err := strconv.Atoi(r.PathValue("id"))
-// 	if err != nil {
-// 		http.Error(w, "Invalid ID format", http.StatusBadRequest)
-// 		return
-// 	}
+// runs PATCH request to replace a todo item matching the given id
+func (s *TodoService) PatchTodo(w http.ResponseWriter, r *http.Request) {
+	type UpdateTodoRequest struct {
+		Task *string `json:"task"`
+	}
 
-// 	var updatedTodo Todo
-// 	dec := json.NewDecoder(r.Body)                   // decodes the body
-// 	if err := dec.Decode(&updatedTodo); err != nil { // fetches the updated todo from the request body
-// 		return
-// 	}
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		http.Error(w, "Invalid ID format", http.StatusBadRequest)
+		return
+	}
 
-// 	json.NewDecoder(r.Body)
-// 	for i, v := range s.Todos {
-// 		if v.ID == id {
-// 			s.Mu.Lock()
-// 			s.Todos[i] = updatedTodo
-// 			s.Mu.Unlock()
-// 			w.WriteHeader(http.StatusOK)
-// 			return
-// 		}
-// 	}
-// 	w.WriteHeader(http.StatusNotFound)
-// }
+	var req UpdateTodoRequest
+	dec := json.NewDecoder(r.Body)           // decodes the body
+	if err := dec.Decode(&req); err != nil { // fetches the updated todo from the request body
+		return
+	}
 
-// // runs PATCH request to replace a todo item matching the given id
-// func (s *TodoService) PatchTodo(w http.ResponseWriter, r *http.Request) {
-// 	type UpdateTodoRequest struct {
-// 		Task *string `json:"task"`
-// 	}
+	updateTodo := Todo{ID: id, Task: *req.Task}
+	repoErr := s.todoRepository.UpdateTodo(id, updateTodo)
+	if repoErr != nil {
+		if errors.Is(repoErr, sql.ErrNoRows) {
+			http.Error(w, "Not Found: 404", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
+		return
+	}
 
-// 	id, err := strconv.Atoi(r.PathValue("id"))
-// 	if err != nil {
-// 		http.Error(w, "Invalid ID format", http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	var updateReq UpdateTodoRequest
-// 	dec := json.NewDecoder(r.Body)                 // decodes the body
-// 	if err := dec.Decode(&updateReq); err != nil { // fetches the updated todo from the request body
-// 		return
-// 	}
-
-// 	for i, v := range s.Todos {
-// 		if v.ID == id {
-// 			if updateReq.Task != nil {
-// 				s.Mu.Lock()
-// 				s.Todos[i].Task = *updateReq.Task
-// 				s.Mu.Unlock()
-// 			}
-
-// 			w.WriteHeader(http.StatusOK)
-// 			return
-// 		}
-// 	}
-// 	w.WriteHeader(http.StatusNotFound)
-// }
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(updateTodo)
+}
 
 // // runs DELETE request to delete a todo item task matching the given id
 // func (s *TodoService) DeleteTodo(w http.ResponseWriter, r *http.Request) {
