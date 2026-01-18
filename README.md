@@ -5,7 +5,6 @@
 - GET route which returns all todos in the slice
 - GET route which returns the todo matching a specified ID
 - POST route which appends a new todo at the end of the slice
-- PUT route which replaces a specficied todo index
 - PATCH route which replaces the todo Task of a specified todo ID
 - DELETE route which deletes a specified todo ID
 
