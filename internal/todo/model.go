@@ -1,7 +1,5 @@
 package todo
 
-import "sync"
-
 // declares the structure for todos slice
 type Todo struct {
 	ID   int    `json:"id"`
@@ -10,20 +8,15 @@ type Todo struct {
 
 // delcares the structure for the TodoService helper
 type TodoService struct {
-	Mu    sync.Mutex // will not longer be needed when adding database integration as sqlite handles concurrency
-	Todos []Todo
+	todoRepository *TodoRepository
 }
 
 // a helper function to initialise and handle Todos slice which
 // allows a single instance to be saved in memory and accessed from
 // both /cmd/server/main.go and /internal/todo/handler.go
 // with the same dataset syncing across
-func NewTodoService() *TodoService {
+func NewTodoService(givenTodoRepository *TodoRepository) *TodoService {
 	return &TodoService{
-		Todos: []Todo{
-			{ID: 1, Task: "Add sqlite file to project"},
-			{ID: 2, Task: "Add sqlite.go database connection logic"},
-			{ID: 3, Task: "Move any data logic from handler.go to repository.go which interacts directly with database"},
-		},
+		todoRepository: givenTodoRepository,
 	}
 }
