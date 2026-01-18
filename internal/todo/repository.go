@@ -54,3 +54,20 @@ func (r *TodoRepository) AddTodo(todo Todo) (int, error) {
 	}
 	return entryId, nil
 }
+
+func (r *TodoRepository) UpdateTodo(id int, todo Todo) error {
+	res, err := r.db.Exec("UPDATE tasks set task=$1 WHERE id=$2", todo.Task, id)
+	if err != nil {
+		return err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
