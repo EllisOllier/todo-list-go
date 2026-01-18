@@ -3,12 +3,14 @@ package database
 import (
 	"database/sql"
 	"fmt"
+
+	_ "github.com/lib/pq"
 )
 
 // handle database connection
 
 func Connect() (*sql.DB, error) {
-	connStr := "user=postgres password=Golang2026! dbname=todo-database port=5431"
+	connStr := "user=postgres password=Golang2026! dbname=postgres port=5431 sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return db, err
