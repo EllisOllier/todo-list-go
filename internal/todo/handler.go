@@ -82,6 +82,7 @@ func (s *TodoService) PostTodo(w http.ResponseWriter, r *http.Request) {
 
 // runs PATCH request to replace a todo item matching the given id
 func (s *TodoService) PatchTodo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	type UpdateTodoRequest struct {
 		Task *string `json:"task"`
 	}
@@ -113,22 +114,23 @@ func (s *TodoService) PatchTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(updateTodo)
 }
 
-// // runs DELETE request to delete a todo item task matching the given id
-// func (s *TodoService) DeleteTodo(w http.ResponseWriter, r *http.Request) {
-// 	id, err := strconv.Atoi(r.PathValue("id"))
-// 	if err != nil {
-// 		http.Error(w, "Invalid ID format", http.StatusBadRequest)
-// 		return
-// 	}
+// runs DELETE request to delete a todo item task matching the given id
+func (s *TodoService) DeleteTodo(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		http.Error(w, "Invalid ID format", http.StatusBadRequest)
+		return
+	}
 
-// 	for i, v := range s.Todos {
-// 		if v.ID == id {
-// 			s.Mu.Lock()
-// 			s.Todos = append(s.Todos[:i], s.Todos[i+1:]...) // ... unpacks the slice into individual items so append can handle
-// 			s.Mu.Unlock()
-// 			w.WriteHeader(http.StatusNoContent)
-// 			return
-// 		}
-// 	}
-// 	w.WriteHeader(http.StatusNotFound)
-// }
+	repoErr := s.todoRepository.DeleteTodo(id)
+	if repoErr != nil {
+		if errors.Is(repoErr, sql.ErrNoRows) {
+			http.Error(w, "Not Found: 404", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
