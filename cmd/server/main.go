@@ -1,13 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	// imported with command: "go mod init github.com/EllisOllier/todo-list-go"
+	"github.com/EllisOllier/todo-list-go/internal/database"
 	"github.com/EllisOllier/todo-list-go/internal/todo" // uses repo to import /internal/todo code as they are private
 )
 
 func main() {
+	db, err := database.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(db.Stats())
+
 	todoService := todo.NewTodoService() // references NewTodoServer in /internal/todo/model.go
 	mux := http.NewServeMux()
 
