@@ -1,18 +1,23 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	// imported with command: "go mod init github.com/EllisOllier/todo-list-go"
 	"github.com/EllisOllier/todo-list-go/internal/database"
+	"github.com/EllisOllier/todo-list-go/internal/middleware"
 	"github.com/EllisOllier/todo-list-go/internal/todo" // uses repo to import /internal/todo code as they are private
 )
 
 func main() {
+	log.Println("Attempting to connect to database...")
 	db, err := database.Connect()
 	if err != nil {
+		log.Println("Failed to connect to database: ", err)
 		panic(err)
 	}
+	log.Println("Successfully connected to database")
 
 	todoRepository := todo.NewTodoRepository(db)
 	todoService := todo.NewTodoService(todoRepository) // references NewTodoServer in /internal/todo/model.go
@@ -25,5 +30,6 @@ func main() {
 	mux.HandleFunc("PATCH /todos/{id}", todoService.PatchTodo)
 	mux.HandleFunc("DELETE /todos/{id}", todoService.DeleteTodo)
 
-	http.ListenAndServe(":8080", mux)
+	middlewareMux := middleware.LoggingMiddleware(mux) // all routes run through mux
+	http.ListenAndServe(":8080", middlewareMux)
 }
