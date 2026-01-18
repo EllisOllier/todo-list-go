@@ -19,7 +19,7 @@ func NewTodoRepository(givenDb *sql.DB) *TodoRepository {
 }
 
 func (r *TodoRepository) GetAllTodos() ([]Todo, error) {
-	var todos []Todo
+	todos := []Todo{}
 	rows, err := r.db.Query("SELECT * FROM tasks")
 	if err != nil {
 		return todos, err
