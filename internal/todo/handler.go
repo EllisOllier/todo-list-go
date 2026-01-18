@@ -1,8 +1,11 @@
 package todo
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
+	"strconv"
 )
 
 // runs GET request for all todos slice stored in-memory
@@ -11,13 +14,37 @@ func (s *TodoService) GetTodos(w http.ResponseWriter, r *http.Request) {
 	enc := json.NewEncoder(w) // set NewEncoder to use ResponseWriter as the output stream
 	rows, err := s.todoRepository.GetAllTodos()
 	if err != nil {
+		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
 		return
 	}
 	if rows == nil {
-		enc.Encode("Server Error: 500")
+		http.Error(w, "No results found", http.StatusNoContent) // might be wrong status
+		return
 	}
 
 	enc.Encode(rows) // encode todos to the output stream
+}
+
+func (s *TodoService) GetTodoById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		http.Error(w, "Invalid ID format", http.StatusBadRequest)
+		return
+	}
+
+	row, err := s.todoRepository.GetTodoById(id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Not Found: 404", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
+		return
+	}
+	enc.Encode(row)
 }
 
 // // runs POST request to add new a task to todos slice stored in-memory
