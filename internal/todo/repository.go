@@ -71,3 +71,20 @@ func (r *TodoRepository) UpdateTodo(id int, todo Todo) error {
 
 	return nil
 }
+
+func (r *TodoRepository) DeleteTodo(id int) error {
+	res, err := r.db.Exec("DELETE FROM tasks WHERE id=$1", id)
+	if err != nil {
+		return err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
