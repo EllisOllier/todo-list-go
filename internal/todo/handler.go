@@ -63,7 +63,10 @@ func (s *TodoService) PostTodo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad Request: 400", http.StatusBadRequest)
 		return
 	}
-
+	if req.Task == nil {
+		http.Error(w, "Missing task field", http.StatusBadRequest)
+		return
+	}
 	newTodo := Todo{Task: *req.Task}
 
 	todoId, err := s.todoRepository.AddTodo(newTodo)
