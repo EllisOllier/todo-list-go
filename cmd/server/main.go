@@ -22,8 +22,7 @@ func main() {
 	mux.HandleFunc("GET /todos", todoService.GetTodos)
 	mux.HandleFunc("GET /todos/{id}", todoService.GetTodoById)
 	mux.HandleFunc("POST /todos", todoService.PostTodo)
-	// mux.HandleFunc("PUT /todos/{id}", todoService.PutTodo)
-	// mux.HandleFunc("PATCH /todos/{id}", todoService.PatchTodo)
+	mux.HandleFunc("PATCH /todos/{id}", todoService.PatchTodo)
 	// mux.HandleFunc("DELETE /todos/{id}", todoService.DeleteTodo)
 
 	http.ListenAndServe(":8080", mux)
