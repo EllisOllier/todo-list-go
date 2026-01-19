@@ -36,6 +36,7 @@ func main() {
 
 	// uses userService to access routes from /internal/user/handler.go
 	mux.HandleFunc("POST /user", userService.CreateAccount)
+	mux.HandleFunc("POST /user/login", userService.Login)
 
 	middlewareMux := middleware.LoggingMiddleware(mux) // all routes run through mux
 	http.ListenAndServe(":8080", middlewareMux)
