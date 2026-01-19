@@ -18,7 +18,12 @@ func NewUserRepository(givenDb *sql.DB) *UserRepository {
 
 func (r *UserRepository) CreateAccount(user User) (int, error) {
 	var user_id int
-	err := r.db.QueryRow("INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id", user.Username, user.PasswordHash).Scan(&user_id)
+	hashedPassword, hashErr := HashPassword(user.PasswordHash)
+	if hashErr != nil {
+		return user_id, hashErr
+	}
+
+	err := r.db.QueryRow("INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id", user.Username, hashedPassword).Scan(&user_id)
 	if err != nil {
 		return user_id, err
 	}
