@@ -30,6 +30,22 @@ func (r *UserRepository) CreateAccount(user User) (int, error) {
 	return user_id, nil
 }
 
+func (r *UserRepository) Login(user User) (int, error) {
+	var storedHash string
+	var userId int
+	err := r.db.QueryRow("SELECT id, password_hash FROM users WHERE username=$1 LIMIT 1", user.Username).Scan(&userId, &storedHash)
+	if err != nil {
+		return 0, err
+	}
+
+	isMatching := CheckPasswordHash(user.PasswordHash, storedHash)
+
+	if !isMatching {
+		return 0, bcrypt.ErrMismatchedHashAndPassword
+	}
+	return userId, nil
+}
+
 // Code from [https://gowebexamples.com/password-hashing/]
 
 // used to hash a unhashed password using bcrypt
