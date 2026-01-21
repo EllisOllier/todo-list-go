@@ -40,7 +40,7 @@ func main() {
 	mux.Handle("GET /todos", middleware.Authenticate(http.HandlerFunc(todoService.GetTodos)))
 	mux.HandleFunc("GET /todos/{id}", todoService.GetTodoById)
 	mux.Handle("POST /todos", middleware.Authenticate(http.HandlerFunc(todoService.PostTodo)))
-	mux.HandleFunc("PATCH /todos/{id}", todoService.PatchTodo)
+	mux.Handle("PATCH /todos/{id}", middleware.Authenticate(http.HandlerFunc(todoService.PatchTodo)))
 	mux.Handle("DELETE /todos/{id}", middleware.Authenticate(http.HandlerFunc(todoService.DeleteTodo)))
 
 	// uses userService to access routes from /internal/user/handler.go
