@@ -35,24 +35,24 @@ func (s *UserService) CreateAccount(w http.ResponseWriter, r *http.Request) {
 
 	}
 	if req.Password == nil {
-		http.Error(w, "Missing password_hash field in body", http.StatusBadRequest)
+		http.Error(w, "Missing password field in body", http.StatusBadRequest)
 		return
 	}
-	newUser := User{Username: *req.Username, PasswordHash: *req.Password}
+	newUser := User{Username: req.Username, PasswordHash: req.Password}
 	userId, err := s.userRepository.CreateAccount(newUser)
 	if err != nil {
 		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
 		return
 	}
-	newUser.ID = userId
+	newUser.ID = *userId
 
-	jwt, err := s.GenerateToken(userId)
+	jwt, err := s.GenerateToken(*userId)
 	if err != nil {
 		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
 		return
 	}
 
-	res := UserResponse{Username: *req.Username, UserId: userId, SessionToken: jwt}
+	res := UserResponse{Username: *req.Username, UserId: *userId, SessionToken: jwt}
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(res)
@@ -74,11 +74,11 @@ func (s *UserService) Login(w http.ResponseWriter, r *http.Request) {
 
 	}
 	if req.Password == nil {
-		http.Error(w, "Missing password_hash field in body", http.StatusBadRequest)
+		http.Error(w, "Missing password field in body", http.StatusBadRequest)
 		return
 	}
 
-	givenUser := User{Username: *req.Username, PasswordHash: *req.Password}
+	givenUser := User{Username: req.Username, PasswordHash: req.Password}
 	userId, err := s.userRepository.Login(givenUser)
 	if err != nil {
 		if err == bcrypt.ErrMismatchedHashAndPassword {

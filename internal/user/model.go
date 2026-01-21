@@ -8,9 +8,9 @@ import (
 )
 
 type User struct {
-	ID           int    `json:"id"`
-	Username     string `json:"username"`
-	PasswordHash string `json:"-"` // stops the return of password_hash
+	ID           int     `json:"id"`
+	Username     *string `json:"username"`
+	PasswordHash *string `json:"-"` // stops the return of password_hash
 }
 
 type UserService struct {
