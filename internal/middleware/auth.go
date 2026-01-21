@@ -18,7 +18,7 @@ type contextKey string
 
 const UserIdKey contextKey = "user_id"
 
-func GetIdFromSessionToken(next http.Handler) http.Handler {
+func Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
