@@ -1,0 +1,54 @@
+definitions:
+  github_com_EllisOllier_todo-list-go_internal_user.UserRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  internal_user.UserRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A simple todo list api written with Golang using a postgresql docker
+    and JWT authentication
+  title: Todo List API
+  version: "1.0"
+paths:
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new account for a user and returns the username, id and
+        session_token
+      parameters:
+      - description: New account details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_EllisOllier_todo-list-go_internal_user.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_EllisOllier_todo-list-go_internal_user.UserRequest'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: Creates a new account for a user
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
