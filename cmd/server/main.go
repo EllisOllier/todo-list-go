@@ -37,9 +37,9 @@ func main() {
 	mux := http.NewServeMux()
 
 	// uses todoService to access routes from /internal/todo/handler.go
-	mux.HandleFunc("GET /todos", todoService.GetTodos)
+	mux.Handle("GET /todos", middleware.Authenticate(http.HandlerFunc(todoService.GetTodos)))
 	mux.HandleFunc("GET /todos/{id}", todoService.GetTodoById)
-	mux.HandleFunc("POST /todos", todoService.PostTodo)
+	mux.Handle("POST /todos", middleware.Authenticate(http.HandlerFunc(todoService.PostTodo)))
 	mux.HandleFunc("PATCH /todos/{id}", todoService.PatchTodo)
 	mux.HandleFunc("DELETE /todos/{id}", todoService.DeleteTodo)
 
