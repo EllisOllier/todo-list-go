@@ -27,6 +27,9 @@ Handles all logic and data handling for the routes
 /internal/todo/model.go:  
 Declares structure for Todo and TodoService struct which is implemented with NewTodoService helper function
 
+### Viewing SwaggerDocs
+http://localhost:8080/swagger/index.html (Start server first)
+
 ### Documentation Used
 https://pkg.go.dev/net/http  
 https://pkg.go.dev/encoding/json  
