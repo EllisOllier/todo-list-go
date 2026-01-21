@@ -2,12 +2,13 @@ package database
 
 import (
 	"database/sql"
+	"os"
 
 	_ "github.com/lib/pq"
 )
 
 func Connect() (*sql.DB, error) {
-	connStr := "user=postgres password=Golang2026! dbname=postgres port=5431 sslmode=disable"
+	connStr := os.Getenv("DB_URL")
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return db, err
