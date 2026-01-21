@@ -7,13 +7,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type UserRequest struct {
+	Username *string `json:"username"`
+	Password *string `json:"password"`
+}
+
+type UserResponse struct {
+	Username     string `json:"username"`
+	UserId       int    `json:"user_id"`
+	SessionToken string `json:"session_token"`
+}
+
 func (s *UserService) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	type NewUserRequest struct {
-		Username     *string `json:"username"`
-		PasswordHash *string `json:"password_hash"`
-	}
-	var req NewUserRequest
+
+	var req UserRequest
 
 	dec := json.NewDecoder(r.Body)
 	err := dec.Decode(&req)
@@ -26,11 +34,11 @@ func (s *UserService) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	if req.PasswordHash == nil {
+	if req.Password == nil {
 		http.Error(w, "Missing password_hash field in body", http.StatusBadRequest)
 		return
 	}
-	newUser := User{Username: *req.Username, PasswordHash: *req.PasswordHash}
+	newUser := User{Username: *req.Username, PasswordHash: *req.Password}
 	userId, err := s.userRepository.CreateAccount(newUser)
 	if err != nil {
 		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
@@ -38,17 +46,21 @@ func (s *UserService) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	}
 	newUser.ID = userId
 
+	jwt, err := s.GenerateToken(userId)
+	if err != nil {
+		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
+		return
+	}
+
+	res := UserResponse{Username: *req.Username, UserId: userId, SessionToken: jwt}
+
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(newUser)
+	json.NewEncoder(w).Encode(res)
 }
 
 func (s *UserService) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	type GivenUserRequest struct {
-		Username     *string `json:"username"`
-		PasswordHash *string `json:"password_hash"`
-	}
-	var req GivenUserRequest
+	var req UserRequest
 
 	dec := json.NewDecoder(r.Body)
 	err := dec.Decode(&req)
@@ -61,12 +73,12 @@ func (s *UserService) Login(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	if req.PasswordHash == nil {
+	if req.Password == nil {
 		http.Error(w, "Missing password_hash field in body", http.StatusBadRequest)
 		return
 	}
 
-	givenUser := User{Username: *req.Username, PasswordHash: *req.PasswordHash}
+	givenUser := User{Username: *req.Username, PasswordHash: *req.Password}
 	userId, err := s.userRepository.Login(givenUser)
 	if err != nil {
 		if err == bcrypt.ErrMismatchedHashAndPassword {
