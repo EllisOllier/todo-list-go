@@ -2,8 +2,10 @@ package todo
 
 // declares the structure for todos slice
 type Todo struct {
-	ID   int    `json:"id"`
-	Task string `json:"task"`
+	ID     int    `json:"id"`
+	Task   string `json:"task"`
+	Done   bool   `json:"done"`
+	UserId int    `json:"user_id"`
 }
 
 // delcares the structure for the TodoService helper
