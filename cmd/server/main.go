@@ -6,12 +6,23 @@ import (
 	"os"
 
 	// imported with command: "go mod init github.com/EllisOllier/todo-list-go"
+	_ "github.com/EllisOllier/todo-list-go/docs"
+
 	"github.com/EllisOllier/todo-list-go/internal/database"
 	"github.com/EllisOllier/todo-list-go/internal/middleware"
 	"github.com/EllisOllier/todo-list-go/internal/todo" // uses repo to import /internal/todo code as they are private
 	"github.com/EllisOllier/todo-list-go/internal/user"
 	"github.com/joho/godotenv"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
+
+// @title Todo List API
+// @version 1.0
+// @description A simple todo list api written with Golang using a postgresql docker and JWT authentication
+// @host localhost:8080
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 
 func main() {
 	envErr := godotenv.Load()
@@ -46,6 +57,8 @@ func main() {
 	// uses userService to access routes from /internal/user/handler.go
 	mux.HandleFunc("POST /user", userService.CreateAccount)
 	mux.HandleFunc("POST /user/login", userService.Login)
+
+	mux.Handle("GET /swagger/", httpSwagger.WrapHandler)
 
 	middlewareMux := middleware.LoggingMiddleware(mux) // all routes run through mux
 	http.ListenAndServe(port, middlewareMux)
