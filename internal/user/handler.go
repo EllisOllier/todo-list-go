@@ -18,6 +18,15 @@ type UserResponse struct {
 	SessionToken string `json:"session_token"`
 }
 
+// CreateAccount godoc
+// @Summary Creates a new account for a user
+// @Description Creates a new account for a user and returns the username, id and session_token
+// @Accept json
+// @Produce json
+// @Param user body UserRequest true "New account details"
+// @Success 201 {object} UserRequest
+// @Failure 400 {string} string "Bad Request"
+// @Router /user [post]
 func (s *UserService) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
