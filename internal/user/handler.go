@@ -98,6 +98,13 @@ func (s *UserService) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	jwt, err := s.GenerateToken(*userId)
+	if err != nil {
+		http.Error(w, "Server Error: 500", http.StatusInternalServerError)
+		return
+	}
+	res := UserResponse{Username: *req.Username, UserId: *userId, SessionToken: jwt}
+
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(userId)
+	json.NewEncoder(w).Encode(res)
 }
